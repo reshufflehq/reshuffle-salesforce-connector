@@ -77,7 +77,7 @@ The app should have OAuth access enabled with the following scopes:
 You can limit the app to only support certain operations, by replacing "Full
 access" with more specific scopes.
 
-Once the app is created, copy the clientId (Customer Key) and clientSecret
+Once the app is created, copy the clientId (Consumer Key) and clientSecret
 (Consumer Secret). We recommend configuring them in the environment variables
 like so:
 
