@@ -83,7 +83,7 @@ like so:
 
 ```js
 const app = new Reshuffle()
-const smartsheetConnector = new SmaetsheetConnector(app, {
+const salesforceConnector = new SalesforceConnector(app, {
     clientId: process.env.SALESFORCE_CLIENT_ID,
     clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
     baseURL: process.env.RESHUFFLE_RUNTIME_BASE_URL,
