@@ -93,7 +93,7 @@ const salesforceConnector = new SalesforceConnector(app, {
 
 The configuration also uses `RESHUFFLE_RUNTIME_BASE_URL` to point to the base
 URL of the server hosting the Reshuffle runtime, and `RESHUFFLE_ENCRYPTION_KEY`
-which is a 64 digit hex string (32 bytes) which is used to encpyt the access
+which is a 64 digit hex string (32 bytes) which is used to encrypt the access
 tokens received from Salesforce during the authentication process.
 
 #### Connector events
