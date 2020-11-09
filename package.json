@@ -1,6 +1,6 @@
 {
   "name": "reshuffle-salesforce-connector",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Reshuffle connector for Salesforce",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
