@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import jsforce from 'jsforce'
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import { Barrier } from './barrier'
 import { encrypt, decrypt } from './encrypt'
 import {
@@ -72,7 +72,7 @@ export class SalesforceConnector extends CoreConnector {
     return this.setConnection(conn)
   }
 
-  public async handle(req: Request, res: Response, next: NextFunction) {
+  public async handle(req: Request, res: Response) {
     if (req.method === 'GET' && req.path === AUTHPATH) {
       await this.handleAuthCode(req.query.code, res)
       return true
