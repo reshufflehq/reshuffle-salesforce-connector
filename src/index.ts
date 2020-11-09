@@ -75,9 +75,10 @@ export class SalesforceConnector extends CoreConnector {
   public async handle(req: Request, res: Response, next: NextFunction) {
     if (req.method === 'GET' && req.path === AUTHPATH) {
       await this.handleAuthCode(req.query.code, res)
+      return true
+    } else {
+      return false
     }
-    next()
-    return true
   }
 
   private async handleAuthCode(code: any, res: Response) {
