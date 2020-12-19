@@ -84,10 +84,10 @@ like so:
 ```js
 const app = new Reshuffle()
 const salesforceConnector = new SalesforceConnector(app, {
-    clientId: process.env.SALESFORCE_CLIENT_ID,
-    clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
-    baseURL: process.env.RESHUFFLE_RUNTIME_BASE_URL,
-    encryptionKey: process.env.RESHUFFLE_ENCRYPTION_KEY,
+  clientId: process.env.SALESFORCE_CLIENT_ID,
+  clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
+  baseURL: process.env.RESHUFFLE_RUNTIME_BASE_URL,
+  encryptionKey: process.env.RESHUFFLE_ENCRYPTION_KEY,
 })
 ```
 
@@ -95,6 +95,23 @@ The configuration also uses `RESHUFFLE_RUNTIME_BASE_URL` to point to the base
 URL of the server hosting the Reshuffle runtime, and `RESHUFFLE_ENCRYPTION_KEY`
 which is a 64 digit hex string (32 bytes) which is used to encrypt the access
 tokens received from Salesforce during the authentication process.
+
+During the authentication process, Salesforce sends back credentials including
+an access token, a refresh token and an instance URL. If you already have
+these access credentials, you can skip the authentication flow and pass them
+when initializing the connector like so:
+
+```js
+const salesforceConnector = new SalesforceConnector(app, {
+  clientId: process.env.SALESFORCE_CLIENT_ID,
+  clientSecret: process.env.SALESFORCE_CLIENT_SECRET,
+  baseURL: process.env.RESHUFFLE_RUNTIME_BASE_URL,
+  encryptionKey: process.env.RESHUFFLE_ENCRYPTION_KEY,
+  accessToken: process.env.SALESFORCE_ACCESS_TOKEN, /* credentials */
+  refreshToken: process.env.SALESFORCE_REFRESH_TOKEN, /* credentials */
+  instanceUrl: process.env.SALESFORCE_INSTANCE_URL, /* credentials */
+})
+```
 
 #### Connector events
 
@@ -162,6 +179,10 @@ in the scripts section of package.json).
 When Reshuffle is running on a server, you can use the `authenticator` utility
 provided with this connector to start the authentication process from your
 (or your user's) machine.
+
+This action throws an error if the connector already has Salesforce access
+credentials. This can happen if credentials were passed upon initialization,
+read from persistent store or if the action is called more than once.
 
 ##### <a name="query"></a>Query action
 
