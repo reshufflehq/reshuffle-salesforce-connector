@@ -53,6 +53,8 @@ _Connector actions_:
 
 [authenticate](#authenticate) Authenticate against Salsforce
 
+[isAuthenticated](#isAuthenticated) Is authenticated with Salsforce
+
 [query](#query) Query Salesforce data
 
 [map](#map) Process a collection of Salesforce objects
@@ -183,6 +185,25 @@ provided with this connector to start the authentication process from your
 This action throws an error if the connector already has Salesforce access
 credentials. This can happen if credentials were passed upon initialization,
 read from persistent store or if the action is called more than once.
+
+##### <a name="isAuthenticated"></a>Is Authenticated action
+
+_Definition:_
+
+```ts
+() => boolean
+```
+
+_Usage:_
+
+```js
+const isAuthenticated = salesforceConnector.isAuthenticated()
+```
+
+Checks whether the connector is authenticated with Salesforce. Auth
+credentials (access token, refresh token and instance URL) may be passed upon
+connector initialization, read from data store or obtained from Salesforce
+through the OAuth flow (see [authenticate](#authenticate) above).
 
 ##### <a name="query"></a>Query action
 

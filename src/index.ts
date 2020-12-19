@@ -237,8 +237,8 @@ export class SalesforceConnector extends CoreConnector {
   // Actions ////////////////////////////////////////////////////////
 
   public async authenticate() {
-    if (this.credentials) {
-      throw new Error('Already have credentials')
+    if (this.isAuthenticated()) {
+      throw new Error('Already authenticated')
     }
     try {
       await this.getConnection()
@@ -256,6 +256,10 @@ export class SalesforceConnector extends CoreConnector {
       )
       await this.authorizationBarrier.join()
     }
+  }
+
+  public isAuthenticated() {
+    return this.credentials !== undefined
   }
 
   public async query(qs: string) {
