@@ -20,6 +20,17 @@ export function openAuthenticationWindow(
   return url
 }
 
+export function validateBaseURL(url?: string): string {
+  if (typeof url !== 'string') {
+    throw new Error(`Invalid url: ${url}`)
+  }
+  const match = url.match(/^(https:\/\/[\w-]+(\.[\w-]+)*(:\d{1,5})?)\/?$/)
+  if (!match) {
+    throw new Error(`Invalid url: ${url}`)
+  }
+  return match[1]
+}
+
 export function validateClientId(clientId?: string): string {
   if (!/^[A-Za-z0-9\._]{85}$/.test(clientId || '')) {
     throw new Error(`Invalid clientId: ${clientId}`)
@@ -66,13 +77,9 @@ export function validateQuery(query?: string): string {
   return query!.trim().replace(/\s\s+/g, ' ').replace(/\s?,\s?/g, ',')
 }
 
-export function validateBaseURL(url?: string): string {
-  if (typeof url !== 'string') {
-    throw new Error(`Invalid url: ${url}`)
+export function validateToken(token?: string): string {
+  if (typeof token !== 'string' || !/^[0-9a-zA-Z\._!]+$/.test(token)) {
+    throw new Error(`Invalid token: ${token}`)
   }
-  const match = url.match(/^(https:\/\/[\w-]+(\.[\w-]+)*(:\d{1,5})?)\/?$/)
-  if (!match) {
-    throw new Error(`Invalid url: ${url}`)
-  }
-  return match[1]
+  return token
 }

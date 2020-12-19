@@ -12,11 +12,12 @@ import {
 import {
   AUTHPATH,
   openAuthenticationWindow,
+  validateBaseURL,
   validateClientId,
   validateClientSecret,
   validateEncryptionKey,
   validateQuery,
-  validateBaseURL,
+  validateToken,
 } from './common'
 
 interface EventOptions {
@@ -29,11 +30,18 @@ interface Account {
   redirectUri: string
 }
 
+interface Credentials {
+  accessToken: string
+  refreshToken: string
+  instanceUrl: string
+}
+
 const NotAuthenticatedError = 'Not authenticated'
 
 export class SalesforceConnector extends CoreConnector {
   private account: Account
   private key: Buffer
+  private credentials?: Credentials
   private connection?: jsforce.Connection
   private authorizationBarrier = new Barrier()
 
@@ -47,7 +55,15 @@ export class SalesforceConnector extends CoreConnector {
     }
     this.key = validateEncryptionKey(options.encryptionKey)
 
-    app.registerHTTPDelegate(AUTHPATH, this as any)
+    if (options.accessToken) {
+      this.credentials = {
+        accessToken: validateToken(options.accessToken),
+        refreshToken: validateToken(options.refreshToken),
+        instanceUrl: validateBaseURL(options.instanceUrl),
+      }
+    } else {
+      app.registerHTTPDelegate(AUTHPATH, this as any)
+    }
   }
 
   private async getConnection() {
@@ -55,18 +71,20 @@ export class SalesforceConnector extends CoreConnector {
       return this.connection
     }
 
-    const encrypted = await this.store.get('credentials')
-    if (!encrypted) {
-      throw new Error(NotAuthenticatedError)
+    if (this.credentials) {
+      const encrypted = encrypt(JSON.stringify(this.credentials), this.key)
+      await this.store.update('credentials', async () => encrypted)
+    } else {
+      const encrypted = await this.store.get('credentials')
+      if (!encrypted) {
+        throw new Error(NotAuthenticatedError)
+      }
+      this.credentials = JSON.parse(decrypt(encrypted, this.key))
     }
-
-    const credentials = JSON.parse(decrypt(encrypted, this.key))
 
     const conn = new jsforce.Connection({
       oauth2: new jsforce.OAuth2(this.account),
-      accessToken: credentials.accessToken,
-      refreshToken: credentials.refreshToken,
-      instanceUrl: credentials.instanceUrl,
+      ...this.credentials,
     })
 
     return this.setConnection(conn)
@@ -92,19 +110,16 @@ export class SalesforceConnector extends CoreConnector {
       })
       const userInfo = await conn.authorize(code)
 
-      const credentials = {
+      this.credentials = {
         accessToken: conn.accessToken,
-        refreshToken: conn.refreshToken,
+        refreshToken: conn.refreshToken!,
         instanceUrl: conn.instanceUrl,
-        userId: userInfo.id,
-        organizationId: userInfo.organizationId,
-        userUrl: userInfo.url,
       }
       console.log(`SalesforceConnector: Authorized as ${
-        credentials.userId} of ${credentials.organizationId}`)
+        userInfo.id} of ${userInfo.organizationId} (${userInfo.url})`)
 
-      const enc = encrypt(JSON.stringify(credentials), this.key)
-      await this.store.update('credentials', async () => enc)
+      const encrypted = encrypt(JSON.stringify(this.credentials), this.key)
+      await this.store.update('credentials', async () => encrypted)
 
       await this.setConnection(conn)
 
@@ -222,6 +237,9 @@ export class SalesforceConnector extends CoreConnector {
   // Actions ////////////////////////////////////////////////////////
 
   public async authenticate() {
+    if (this.credentials) {
+      throw new Error('Already have credentials')
+    }
     try {
       await this.getConnection()
     } catch (e) {
