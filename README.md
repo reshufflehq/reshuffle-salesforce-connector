@@ -8,7 +8,7 @@
 
 ### Reshuffle Salesforce Connector
 
-This package contains a [Reshuffle](https://reshuffle.com)
+This package contains a [Reshuffle](https://github.com/reshufflehq/reshuffle)
 connector to [Salesforce](https://www.salesforce.com/).
 
 The following example tracks changes to account names:
