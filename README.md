@@ -2,7 +2,7 @@
 
 [Code](https://github.com/reshufflehq/reshuffle-salesforce-connector) |
 [npm](https://www.npmjs.com/package/reshuffle-salesforce-connector) |
-[Code sample](https://github.com/reshufflehq/reshuffle-salesforce-connector/examples)
+[Code sample](https://github.com/reshufflehq/reshuffle-salesforce-connector/tree/master/examples)
 
 `npm install reshuffle-salesforce-connector`
 
